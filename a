@@ -1,0 +1,32 @@
+[1mdiff --git a/write_parquet.py b/write_parquet.py[m
+[1mdeleted file mode 100644[m
+[1mindex 0da7ef2..0000000[m
+[1m--- a/write_parquet.py[m
+[1m+++ /dev/null[m
+[36m@@ -1,26 +0,0 @@[m
+[31m-# coding=utf-8[m
+[31m-from pyspark.sql import SparkSession[m
+[31m-[m
+[31m-from pyspark.sql import functions as F[m
+[31m-from pyspark.sql.types import FloatType[m
+[31m-[m
+[31m-spark = SparkSession \[m
+[31m-    .builder \[m
+[31m-    .appName("Processa CSV dados Viagem") \[m
+[31m-    .getOrCreate()[m
+[31m-[m
+[31m-to_value=lambda v: float(v.replace(",", "."))[m
+[31m-udf_to_value = F.udf(to_value, FloatType())[m
+[31m-[m
+[31m-df=spark.read.csv("201609_Diarias_utf8.csv", header=True, sep="\t")[m
+[31m-[m
+[31m-df2=df.withColumn("Valor", udf_to_value(df["Valor Pagamento"])) \[m
+[31m-    .withColumn("DtPg", F.to_date(df["Data Pagamento"], format="dd/MM/yyyy"))[m
+[31m-[m
+[31m-df3=df2.select(df2["Nome Órgão Superior"].alias("Orgao"),[m
+[31m-    df2["Nome Função"].alias("Funcao"),[m
+[31m-    df2["Nome Programa"].alias("Programa"),[m
+[31m-    df2["Nome Favorecido"].alias("Favorecido"),[m
+[31m-    df2["Valor"], df2["DtPg"])[m
+[31m-[m
+[31m-df3.write.parquet("governo/viagens/2017/07")[m
